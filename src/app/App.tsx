@@ -1,3 +1,5 @@
+import type { StudyLink } from '../models/entities';
+import { linkLabel, validLink } from '../features/studies/studyLinks';
 import { useRef, useState } from 'react';
 import { BottomNavigation } from './BottomNavigation';
 import type { ViewId } from './navigation';
@@ -22,6 +24,12 @@ export function App() {
   const editor = useRef<NoteEditorHandle>(null);
   const [view, setView] = useState<ViewId>('today');
   const main = useRef<HTMLElement>(null);
+  const linksReady = !studies.loading && !studies.error;
+  const visibleNotes = notes.notes.map(note=>({...note,...(linksReady ? validLink(note,studies.courses,studies.projects) : {})}));
+  const visibleTasks = tasks.tasks.map(task=>({...task,...(linksReady ? validLink(task,studies.courses,studies.projects) : {})}));
+  const getLinkLabel = (link: StudyLink) => linkLabel(link, studies.courses, studies.projects);
+  async function removeCourse(id: string) { await studies.removeCourse(id); await Promise.all([notes.reload(), tasks.reload()]); }
+  async function removeProject(id: string) { await studies.removeProject(id); await Promise.all([notes.reload(), tasks.reload()]); }
   function navigate(next: ViewId) {
     setView(next);
     window.scrollTo({ top: 0 });
@@ -32,10 +40,10 @@ export function App() {
     <header className="brand-bar"><span className="brand-mark"><Icon name="studies" size={20}/></span><span>Education Hub</span><span className="brand-caption">Din studieplats</span></header>
     <main id="main" ref={main} tabIndex={-1}>
       {view === 'today' && <TodayView onNavigate={navigate} currentCourse={studies.courses.find(course => course.isCurrent)} studiesError={studies.error} studiesLoading={studies.loading}/>}
-      {view === 'notes' && <NotesView {...notes} onRetry={() => void notes.reload()} onCreate={() => editor.current?.open()} onOpen={note => editor.current?.open(note)}/>}
-      {view === 'tasks' && <TasksView {...tasks} onRetry={() => void tasks.reload()} onCreate={() => taskEditor.current?.open()} onOpen={task => taskEditor.current?.open(task)} onStatus={(task, status) => void tasks.changeStatus(task, status)}/>}
+      {view === 'notes' && <NotesView getLinkLabel={getLinkLabel} {...notes} notes={visibleNotes} onRetry={() => void notes.reload()} onCreate={() => editor.current?.open()} onOpen={note => editor.current?.open(note)}/>}
+      {view === 'tasks' && <TasksView getLinkLabel={getLinkLabel} {...tasks} tasks={visibleTasks} onRetry={() => void tasks.reload()} onCreate={() => taskEditor.current?.open()} onOpen={task => taskEditor.current?.open(task)} onStatus={(task, status) => void tasks.changeStatus(task, status)}/>}
       {view === 'studies' && <StudiesView {...studies} onRetry={() => void studies.reload()} onOpen={(kind, item) => studyEditor.current?.open(kind, item)}/>}
     </main>
-    <StudyEditor ref={studyEditor} {...studies}/><NoteEditor ref={editor} onSave={notes.save} onRemove={notes.remove}/><TaskEditor ref={taskEditor} onSave={tasks.save} onRemove={tasks.remove}/><QuickAdd onNewNote={() => editor.current?.open()} onNewTask={() => taskEditor.current?.open()}/><BottomNavigation active={view} onChange={navigate}/>
+    <StudyEditor ref={studyEditor} {...studies} notes={visibleNotes} tasks={visibleTasks} contentError={notes.error || tasks.error} contentLoading={notes.loading || tasks.loading} onNote={note=>editor.current?.open(note)} onTask={task=>taskEditor.current?.open(task)} removeCourse={removeCourse} removeProject={removeProject}/><NoteEditor linksReady={Boolean(linksReady)} courses={studies.courses} projects={studies.projects} ref={editor} onSave={notes.save} onRemove={notes.remove}/><TaskEditor linksReady={Boolean(linksReady)} courses={studies.courses} projects={studies.projects} ref={taskEditor} onSave={tasks.save} onRemove={tasks.remove}/><QuickAdd onNewNote={() => editor.current?.open()} onNewTask={() => taskEditor.current?.open()}/><BottomNavigation active={view} onChange={navigate}/>
   </div>;
 }
