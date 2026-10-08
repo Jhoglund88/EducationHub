@@ -61,3 +61,14 @@ node --test tests/notes.test.mjs tests/tasks.test.mjs
 ```
 
 Steg 4 ligger på `feature/tasks`. Ingen commit eller merge görs automatiskt.
+
+## Steg 5A – Kurser och projekt
+
+Studier har kurs- och projektlistor samt enkla formulär. Kursnamn/projektnamn krävs. Kursdatum är frivilliga; högst en kurs kan vara aktuell och visas på startsidan. Projekt kan kopplas till en kurs eller vara fristående. Vid kursradering behålls projekten med kurskopplingen borttagen.
+
+- `src/features/studies/StudiesView.tsx`: listor och tomma lägen.
+- `StudyEditor.tsx`: kurs- och projektformulär, validering och bekräftad radering.
+- `useStudies.ts`: React-tillstånd och repository-anrop.
+- `src/storage/LocalStudiesRepository.ts`: courses/projects följer EntityRepository-kontraktet och lagras tillsammans i education-hub.studies.v1. Kursradering och rensning av projektkopplingar sker i en enda skrivning. Anteckningar och uppgifter använder fortsatt sina egna lagringsnycklar.
+
+Kör alla tester: `node --test tests/*.test.mjs`. Kopplingar från anteckningar/uppgifter till studier ingår inte i steg 5A. Ingen commit eller merge görs automatiskt på feature/studies.

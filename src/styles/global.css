@@ -86,3 +86,12 @@ button:disabled { opacity: .6; cursor: wait; }
 .task-completed { text-decoration: line-through; color: var(--muted); }
 .task-count { min-width: 24px; text-align: center; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 12px; padding: 2px 8px; }
 .task-empty { padding: 20px; font-size: 13px; color: var(--muted); }
+.study-editor select { width: 100%; font: inherit; font-size: 16px; min-height: 48px; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; }
+.study-editor select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.study-dates { display: grid; gap: 12px; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.study-dates input { min-width: 0; }
+.study-editor .current-course { display: flex; align-items: center; gap: 12px; min-height: 48px; }
+.study-editor .current-course input { width: 22px; height: 22px; accent-color: var(--accent); }
+.study-badge { display: inline-block; margin-top: 12px; padding: 4px 10px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 11px; }
+.compact-card h3 { overflow-wrap: anywhere; }
+@media (max-width: 400px) { .study-dates { grid-template-columns: 1fr; } }
