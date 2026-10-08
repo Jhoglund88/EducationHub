@@ -27,15 +27,20 @@ Projektet innehåller även `pnpm-lock.yaml`, eftersom grundversionen verifierad
 - `src/components`: återanvändbara ikoner, tomma tillstånd och snabbmeny.
 - `src/features`: en mapp per huvudfunktion. Ändra en vy i dess egen mapp.
 - `src/models/entities.ts`: datamodeller. Tidsstämplar är ISO-strängar; kursdatum avses vara YYYY-MM-DD.
-- `src/storage/StudyRepository.ts`: asynkront lagringskontrakt för en framtida implementation. Vyerna har ännu ingen datalagring.
+- `src/storage/StudyRepository.ts`: asynkront lagringskontrakt för en framtida implementation. Anteckningar använder LocalNotesRepository.ts bakom detta kontrakt. useNotes.ts hanterar React-tillstånd; NoteEditor.tsx hanterar formuläret. Valfria kurs- och projekt-ID bevaras vid redigering, men visas ännu inte i gränssnittet.
 - `src/styles/tokens.css`: gemensamma färger, typografi, avstånd och mörkt läge.
 - `src/styles/global.css`: layout och komponenternas utseende.
 - `public`: framtida statiska resurser som appikoner.
 
-## Omfattning: steg 1 och 2
+## Omfattning: steg 1–3
 
-Navigation, mobilskal, automatiskt ljust/mörkt läge och snabbmeny fungerar. Vyerna är tydliga platshållare. Snabbmenyns två alternativ visar vad som kommer, men öppnar inga formulär. CRUD, lokal lagring, schema, sökning, PWA-installation, databas och inloggning är inte implementerade.
+Navigation, mobilskal, automatiskt ljust/mörkt läge och snabbmeny fungerar. Anteckningar kan skapas, läsas, redigeras och tas bort med bekräftelse. Senast ändrade visas först. Anteckningar lagras lokalt per webbläsare och adress; localhost och nätverksadressen har separata data. Övriga vyer är platshållare. Uppgifter, schema, sökning, PWA-installation, databas och inloggning är inte implementerade.
 
 ## Granska på mobil
 
 Öppna webbläsarens utvecklarverktyg och välj exempelvis iPhone eller en bredd på 390 px. Prova alla fyra flikar, snabbmenyn, liten skärm, landskap och ljust/mörkt läge. För en fysisk iPhone på samma nätverk kan du använda nätverksadressen från Vite; datorns brandvägg måste tillåta anslutningen. PWA-installation och offlinefunktion kommer i en senare del av fas 1.
+
+## Tester för anteckningar
+
+Kör `node --test tests/notes.test.mjs` med Node.js 24 eller senare. Testerna täcker skapa, läsa, redigera, radering, ordning, omladdning, framtida kopplingar, trasiga data och blockerad/full lagring. Lagringsfel ändrar inte listan och formuläret behåller texten vid sparfel.
+
