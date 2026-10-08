@@ -9,7 +9,11 @@ import { TasksView } from '../features/tasks/TasksView';
 import { StudiesView } from '../features/studies/StudiesView';
 import { useNotes } from '../features/notes/useNotes';
 import { NoteEditor, type NoteEditorHandle } from '../features/notes/NoteEditor';
+import { useTasks } from '../features/tasks/useTasks';
+import { TaskEditor, type TaskEditorHandle } from '../features/tasks/TaskEditor';
 export function App() {
+  const tasks = useTasks();
+  const taskEditor = useRef<TaskEditorHandle>(null);
   const notes = useNotes();
   const editor = useRef<NoteEditorHandle>(null);
   const [view, setView] = useState<ViewId>('today');
@@ -25,10 +29,11 @@ export function App() {
     <main id="main" ref={main} tabIndex={-1}>
       {view === 'today' && <TodayView onNavigate={navigate}/>}
       {view === 'notes' && <NotesView {...notes} onRetry={() => void notes.reload()} onCreate={() => editor.current?.open()} onOpen={note => editor.current?.open(note)}/>}
-      {view === 'tasks' && <TasksView/>}
+      {view === 'tasks' && <TasksView {...tasks} onRetry={() => void tasks.reload()} onCreate={() => taskEditor.current?.open()} onOpen={task => taskEditor.current?.open(task)} onStatus={(task, status) => void tasks.changeStatus(task, status)}/>}
       {view === 'studies' && <StudiesView/>}
     </main>
-    <NoteEditor ref={editor} onSave={notes.save} onRemove={notes.remove}/><QuickAdd onNewNote={() => editor.current?.open()}/><BottomNavigation active={view} onChange={navigate}/>
+    <NoteEditor ref={editor} onSave={notes.save} onRemove={notes.remove}/><TaskEditor ref={taskEditor} onSave={tasks.save} onRemove={tasks.remove}/><QuickAdd onNewNote={() => editor.current?.open()} onNewTask={() => taskEditor.current?.open()}/><BottomNavigation active={view} onChange={navigate}/>
   </div>;
 }
+
 

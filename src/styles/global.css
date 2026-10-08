@@ -74,3 +74,15 @@ button.quick-option { width: 100%; background: transparent; border-right: 0; bor
 .error-message { color: var(--text); border-left: 3px solid var(--accent); padding-left: 12px; margin-top: 16px; font-size: 14px; }
 .feedback { padding: 20px; }
 button:disabled { opacity: .6; cursor: wait; }
+.task-editor select { width: 100%; font: inherit; font-size: 16px; min-height: 48px; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; }
+.task-editor select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.task-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.task-row { display: flex; align-items: center; gap: 4px; padding: 8px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+.task-check { width: 48px; min-height: 48px; display: grid; place-items: center; flex-shrink: 0; cursor: pointer; }
+.task-check input { width: 22px; height: 22px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.task-open { flex: 1; min-width: 0; min-height: 58px; text-align: left; padding: 8px; border: 0; border-radius: 10px; background: transparent; color: var(--text); }
+.task-open > span { display: block; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.task-open time { display: block; font-size: 11px; color: var(--muted); margin-top: 5px; }
+.task-completed { text-decoration: line-through; color: var(--muted); }
+.task-count { min-width: 24px; text-align: center; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 12px; padding: 2px 8px; }
+.task-empty { padding: 20px; font-size: 13px; color: var(--muted); }

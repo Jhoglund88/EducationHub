@@ -32,9 +32,9 @@ Projektet innehåller även `pnpm-lock.yaml`, eftersom grundversionen verifierad
 - `src/styles/global.css`: layout och komponenternas utseende.
 - `public`: framtida statiska resurser som appikoner.
 
-## Omfattning: steg 1–3
+## Omfattning: steg 1–4
 
-Navigation, mobilskal, automatiskt ljust/mörkt läge och snabbmeny fungerar. Anteckningar kan skapas, läsas, redigeras och tas bort med bekräftelse. Senast ändrade visas först. Anteckningar lagras lokalt per webbläsare och adress; localhost och nätverksadressen har separata data. Övriga vyer är platshållare. Uppgifter, schema, sökning, PWA-installation, databas och inloggning är inte implementerade.
+Navigation, mobilskal, automatiskt ljust/mörkt läge och snabbmeny fungerar. Anteckningar kan skapas, läsas, redigeras och tas bort med bekräftelse. Senast ändrade visas först. Anteckningar lagras lokalt per webbläsare och adress; localhost och nätverksadressen har separata data. Uppgifter kan skapas, redigeras, flyttas mellan Idag/Senare/Klart och tas bort med bekräftelse. Kryssrutan flyttar en uppgift till Klart; avmarkering flyttar den till Idag. Uppgifter lagras separat från anteckningar. Startsidan och studievyn är fortfarande platshållare. Schema, sökning, PWA-installation, databas och inloggning är inte implementerade.
 
 ## Granska på mobil
 
@@ -44,3 +44,20 @@ Navigation, mobilskal, automatiskt ljust/mörkt läge och snabbmeny fungerar. An
 
 Kör `node --test tests/notes.test.mjs` med Node.js 24 eller senare. Testerna täcker skapa, läsa, redigera, radering, ordning, omladdning, framtida kopplingar, trasiga data och blockerad/full lagring. Lagringsfel ändrar inte listan och formuläret behåller texten vid sparfel.
 
+
+## Uppgifter
+
+- `src/features/tasks/TasksView.tsx`: grupper och tomma lägen.
+- `TaskRow.tsx`: kryssruta, titel och skapandedatum.
+- `TaskEditor.tsx`: titel, status och bekräftad radering. Inmatning behålls vid sparfel.
+- `useTasks.ts`: tillstånd, asynkrona ändringar och felhantering.
+- `taskStatus.ts`: statusnamn och statusändringar.
+- `src/storage/LocalTasksRepository.ts`: versionerad lokal lagring bakom samma EntityRepository-kontrakt som anteckningar. Kurs- och projekt-ID bevaras men exponeras inte i formuläret.
+
+Kör samtliga lagringstester med Node.js 24 eller senare:
+
+```sh
+node --test tests/notes.test.mjs tests/tasks.test.mjs
+```
+
+Steg 4 ligger på `feature/tasks`. Ingen commit eller merge görs automatiskt.
