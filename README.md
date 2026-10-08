@@ -72,3 +72,19 @@ Studier har kurs- och projektlistor samt enkla formulär. Kursnamn/projektnamn k
 - `src/storage/LocalStudiesRepository.ts`: courses/projects följer EntityRepository-kontraktet och lagras tillsammans i education-hub.studies.v1. Kursradering och rensning av projektkopplingar sker i en enda skrivning. Anteckningar och uppgifter använder fortsatt sina egna lagringsnycklar.
 
 Kör alla tester: `node --test tests/*.test.mjs`. Kopplingar från anteckningar/uppgifter till studier ingår inte i steg 5A. Ingen commit eller merge görs automatiskt på feature/studies.
+
+## Steg 5B – Studiekopplingar
+
+Anteckningar och uppgifter har ett frivilligt val: Ingen koppling, en kurs eller ett projekt. En direkt koppling sparas i de befintliga courseId/projectId-fälten; innehållet dupliceras inte. Kursvyn visar direkt kurskopplat innehåll samt innehåll i kursens projekt. Projektvyn visar direkt projektkopplat innehåll. Klick öppnar det gemensamma formuläret och uppdaterar alla vyer efter sparning.
+
+- `src/components/StudyLinkSelect.tsx`: gemensamt kopplingsval.
+- `src/features/studies/studyLinks.ts`: värden, etiketter och hantering av brutna referenser.
+- `RelatedContent.tsx`: relaterade anteckningar och uppgifter i studieformuläret.
+- `src/storage/removeStudyAndLinks.ts`: radering genom befintliga repositories med förberedda ändringar och återställning vid skrivfel. Innehåll och tidsstämplar behålls. Bara kopplingar till det borttagna objektet rensas; projektkopplat innehåll behåller projektkopplingen när projektets kurs tas bort.
+- NoteEditor/TaskEditor och listkomponenterna visar det gemensamma valet och diskreta etiketter. App.tsx kopplar ihop tillstånd utan en separat innehållskopia.
+
+Gamla data utan koppling behöver ingen migrering. Saknade referenser visas som Ingen koppling och rensas vid nästa sparning. Vid fel i studielagringen behålls befintlig koppling och kopplingsvalet inaktiveras. Gamla dubbla kopplingar visas med projektet som enda direkt koppling och normaliseras vid sparning.
+
+Begränsning: localStorage saknar transaktioner över flera nycklar. Vanliga skrivfel återställs, men ett avbrutet webbläsar-/datorförlopp mitt i radering kan lämna en bruten referens, som behandlas enligt ovan. Samtidig redigering i flera flikar och synkronisering ingår inte. Fysisk iPhone och dess tangentbord behöver fortfarande granskas på enheten.
+
+Tester: `node --test tests/*.test.mjs`. Steg 5B ligger på feature/study-links; inga commits, merges eller push görs automatiskt.

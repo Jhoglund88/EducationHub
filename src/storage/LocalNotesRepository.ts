@@ -22,6 +22,7 @@ export class LocalNotesRepository implements EntityRepository<Note> {
     } catch { throw new Error('Anteckningarna kunde inte läsas. Kontrollera att webbläsaren tillåter lokal lagring och försök igen. Sparade data har inte ändrats.'); }
   }
   async save(note: Note): Promise<void> {
+    if (note.courseId && note.projectId) throw new Error('Välj högst en koppling: kurs eller projekt.');
     const notes = await this.list();
     this.write([note, ...notes.filter(item => item.id !== note.id)]);
   }
@@ -32,4 +33,3 @@ export class LocalNotesRepository implements EntityRepository<Note> {
   }
 }
 export const notesRepository = new LocalNotesRepository();
-

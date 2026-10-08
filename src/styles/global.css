@@ -95,3 +95,10 @@ button:disabled { opacity: .6; cursor: wait; }
 .study-badge { display: inline-block; margin-top: 12px; padding: 4px 10px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 11px; }
 .compact-card h3 { overflow-wrap: anywhere; }
 @media (max-width: 400px) { .study-dates { grid-template-columns: 1fr; } }
+.study-link-select { width: 100%; min-height: 48px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font: inherit; font-size: 16px; background: var(--bg); color: var(--text); }
+.link-label { display: inline-block; max-width: 100%; overflow-wrap: anywhere; margin-top: 8px; color: var(--accent); font-size: 11px; font-weight: 500; }
+.task-open > .link-label { font-size: 11px; font-weight: 500; }
+.related-content { margin-top: 28px; border-top: 1px solid var(--border); padding-top: 20px; }
+.related-content h4 { font-size: 13px; margin: 20px 0 8px; }
+.related-item { display: block; width: 100%; text-align: left; min-height: 48px; margin-top: 8px; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; overflow-wrap: anywhere; }
+.related-item span { display: block; color: var(--muted); font-size: 11px; margin-top: 4px; }

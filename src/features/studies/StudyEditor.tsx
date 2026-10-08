@@ -1,9 +1,10 @@
+import { RelatedContent } from './RelatedContent';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import type { Course, Project } from '../../models/entities';
+import type { Course, Project, Note, Task } from '../../models/entities';
 import { Icon } from '../../components/Icon';
 export type StudyKind = 'course' | 'project';
 export interface StudyEditorHandle { open: (kind: StudyKind, item?: Course | Project) => void }
-interface Props { courses: Course[]; saveCourse: (course: Course) => Promise<void>; saveProject: (project: Project) => Promise<void>; removeCourse: (id: string) => Promise<void>; removeProject: (id: string) => Promise<void> }
+interface Props { notes: Note[]; tasks: Task[]; contentError: string; contentLoading: boolean; onNote: (note: Note) => void; onTask: (task: Task) => void; courses: Course[]; projects: Project[]; saveCourse: (course: Course) => Promise<void>; saveProject: (project: Project) => Promise<void>; removeCourse: (id: string) => Promise<void>; removeProject: (id: string) => Promise<void> }
 export const StudyEditor = forwardRef<StudyEditorHandle, Props>(function StudyEditor(props, ref) {
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -54,7 +55,6 @@ export const StudyEditor = forwardRef<StudyEditorHandle, Props>(function StudyEd
     <label htmlFor="study-name">{kind === 'course' ? 'Kursnamn' : 'Projektnamn'}</label><input ref={input} id="study-name" value={name} onChange={e => setName(e.target.value)} autoComplete="off" aria-required="true" disabled={busy}/>
     {kind === 'course' ? <><div className="study-dates"><div><label htmlFor="course-start">Startdatum (valfritt)</label><input id="course-start" type="date" value={startDate} onChange={e => setStart(e.target.value)} disabled={busy}/></div><div><label htmlFor="course-end">Slutdatum (valfritt)</label><input id="course-end" type="date" value={endDate} onChange={e => setEnd(e.target.value)} disabled={busy}/></div></div><label className="current-course"><input type="checkbox" checked={isCurrent} onChange={e => setCurrent(e.target.checked)} disabled={busy}/>Aktuell kurs</label><p className="muted">Visas på startsidan. En kurs kan vara aktuell åt gången.</p></> : <><label htmlFor="project-course">Kurs (valfritt)</label><select id="project-course" value={courseId} onChange={e => setCourse(e.target.value)} disabled={busy}><option value="">Fristående</option>{props.courses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></>}
     {error && <p className="error-message" role="alert">{error}</p>}
-    <div className="editor-actions">{original && <button className="delete-button" type="button" disabled={busy} onClick={() => { const message = kind === 'course' ? 'Ta bort kursen? Projekten behålls och blir fristående. Detta går inte att ångra.' : 'Ta bort projektet? Detta går inte att ångra.'; if (window.confirm(message)) void perform(() => kind === 'course' ? props.removeCourse(original.id) : props.removeProject(original.id)); }}>Ta bort</button>}<button className="primary-button" disabled={busy}>{busy ? 'Sparar…' : kind === 'course' ? 'Spara kurs' : 'Spara projekt'}</button></div>
-  </form></dialog>;
+    <div className="editor-actions">{original && <button className="delete-button" type="button" disabled={busy} onClick={() => { const message = kind === 'course' ? 'Ta bort kursen? Projekten behålls och blir fristående. Anteckningar och uppgifter behålls utan direkt kurskoppling. Detta går inte att ångra.' : 'Ta bort projektet? Anteckningar och uppgifter behålls utan projektkoppling. Detta går inte att ångra.'; if (window.confirm(message)) void perform(() => kind === 'course' ? props.removeCourse(original.id) : props.removeProject(original.id)); }}>Ta bort</button>}<button className="primary-button" disabled={busy}>{busy ? 'Sparar…' : kind === 'course' ? 'Spara kurs' : 'Spara projekt'}</button></div>
+  </form>{original && <RelatedContent notes={props.notes.filter(n => kind === 'course' ? n.courseId === original.id || props.projects.some(p=>p.courseId===original.id && p.id===n.projectId) : n.projectId === original.id)} tasks={props.tasks.filter(t => kind === 'course' ? t.courseId === original.id || props.projects.some(p=>p.courseId===original.id && p.id===t.projectId) : t.projectId === original.id)} error={props.contentError} loading={props.contentLoading} onNote={note=>{ props.onNote(note); }} onTask={task=>{ props.onTask(task); }}/>}</dialog>;
 });
-

@@ -24,6 +24,7 @@ export class LocalTasksRepository implements EntityRepository<Task> {
     } catch { throw new Error('Uppgifterna kunde inte läsas. Kontrollera att webbläsaren tillåter lokal lagring och försök igen. Sparade data har inte ändrats.'); }
   }
   async save(note: Task): Promise<void> {
+    if (note.courseId && note.projectId) throw new Error('Välj högst en koppling: kurs eller projekt.');
     if (!isTask(note)) throw new Error('Uppgiften måste ha en titel och en giltig status.');
     const tasks = await this.list();
     this.write([note, ...tasks.filter(item => item.id !== note.id)]);
@@ -35,6 +36,3 @@ export class LocalTasksRepository implements EntityRepository<Task> {
   }
 }
 export const tasksRepository = new LocalTasksRepository();
-
-
-
